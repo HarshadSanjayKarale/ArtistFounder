@@ -1,4 +1,5 @@
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -36,7 +37,7 @@ public class HomePageLoggedIn extends JFrame {
 
     private JPanel createNavbar() {
         JPanel navbar = new JPanel();
-        navbar.setBackground(Color.BLUE);
+        navbar.setBackground(Color.RED);
         navbar.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         JLabel title = new JLabel("Artist Founder");
@@ -191,7 +192,7 @@ public class HomePageLoggedIn extends JFrame {
 
     private void displayPosts() {
         JPanel postsPanel = new JPanel();
-        postsPanel.setLayout(new GridLayout(0, 2, 10, 10)); // 2 cards per row, with 10px horizontal and vertical gap
+        postsPanel.setLayout(new GridLayout(0, 3, 10, 10)); // 2 cards per row, with 10px horizontal and vertical gap
     
         try {
             String jdbcUrl = "jdbc:mysql://localhost:3306/pblproject";
@@ -201,7 +202,7 @@ public class HomePageLoggedIn extends JFrame {
             Connection connection = DriverManager.getConnection(jdbcUrl, dbUser, dbPassword);
     
             String query = "SELECT posts.*, users.first_name FROM posts " +
-                           "INNER JOIN users ON posts.user_id = users.id";
+                    "INNER JOIN users ON posts.user_id = users.id";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
     
@@ -227,6 +228,17 @@ public class HomePageLoggedIn extends JFrame {
                 descriptionLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 cardPanel.add(descriptionLabel, BorderLayout.SOUTH);
     
+                // Create a button for each card
+                JButton viewButton = new JButton("View Details");
+                viewButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        // Add action for the button here
+                        JOptionPane.showMessageDialog(HomePageLoggedIn.this, "Button clicked for post: " + title, "Post Details", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                });
+                cardPanel.add(viewButton, BorderLayout.EAST); // Add the button to the east side of the card
+    
                 postsPanel.add(cardPanel);
             }
     
@@ -241,6 +253,7 @@ public class HomePageLoggedIn extends JFrame {
         getContentPane().add(scrollPane, BorderLayout.CENTER);
         revalidate(); // Refresh the layout to show the new components
     }
+    
     
     
     
