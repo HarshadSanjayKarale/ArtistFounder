@@ -190,9 +190,15 @@ public class HomePageLoggedIn extends JFrame {
     }
 
 
+
+
+
+
+
+
     private void displayPosts() {
         JPanel postsPanel = new JPanel();
-        postsPanel.setLayout(new GridLayout(0, 3, 10, 10)); // 2 cards per row, with 10px horizontal and vertical gap
+        postsPanel.setLayout(new GridLayout(0, 2, 10, 10)); // 3 cards per row, with 10px horizontal and vertical gap
     
         try {
             String jdbcUrl = "jdbc:mysql://localhost:3306/pblproject";
@@ -213,31 +219,45 @@ public class HomePageLoggedIn extends JFrame {
                 String firstName = resultSet.getString("first_name");
     
                 // Create a panel for each post
-                JPanel cardPanel = new JPanel(new BorderLayout());
+                JPanel cardPanel = new JPanel();
+                cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
                 cardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1)); // Add a border to the card
     
                 JLabel titleLabel = new JLabel(title + " by " + firstName);
-                titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                cardPanel.add(titleLabel, BorderLayout.NORTH);
+                titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                cardPanel.add(titleLabel);
     
                 JLabel imageLabel = new JLabel(new ImageIcon(imageUrl));
-                imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                cardPanel.add(imageLabel, BorderLayout.CENTER);
+                imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                cardPanel.add(imageLabel);
     
-                JLabel descriptionLabel = new JLabel("<html><body style='width: 100px; text-align: center'>" + description + "</body></html>");
-                descriptionLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                cardPanel.add(descriptionLabel, BorderLayout.SOUTH);
+                JLabel descriptionLabel = new JLabel("<html><body style='width: 200px; text-align: center'>" + description + "</body></html>");
+                descriptionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                cardPanel.add(descriptionLabel);
     
-                // Create a button for each card
+                // Create a button panel for the buttons
+                JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 5, 5));
+                buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
                 JButton viewButton = new JButton("View Details");
                 viewButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        // Add action for the button here
                         JOptionPane.showMessageDialog(HomePageLoggedIn.this, "Button clicked for post: " + title, "Post Details", JOptionPane.INFORMATION_MESSAGE);
                     }
                 });
-                cardPanel.add(viewButton, BorderLayout.EAST); // Add the button to the east side of the card
+                buttonPanel.add(viewButton);
+    
+                JButton recruitButton = new JButton("Recruit");
+                recruitButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JOptionPane.showMessageDialog(HomePageLoggedIn.this, "Recruit button clicked for post: " + title, "Recruit Details", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                });
+                buttonPanel.add(recruitButton);
+    
+                cardPanel.add(buttonPanel);
     
                 postsPanel.add(cardPanel);
             }
@@ -253,6 +273,8 @@ public class HomePageLoggedIn extends JFrame {
         getContentPane().add(scrollPane, BorderLayout.CENTER);
         revalidate(); // Refresh the layout to show the new components
     }
+    
+    
     
     
     
