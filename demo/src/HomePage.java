@@ -30,23 +30,36 @@ public class HomePage extends JFrame {
     }
 
     private JPanel createNavbar() {
-        JPanel navbar = new JPanel();
-        navbar.setBackground(Color.BLUE);
-        navbar.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
-        JLabel title = new JLabel("Artist Founder");
-        title.setForeground(Color.WHITE);
-        title.setHorizontalAlignment(SwingConstants.CENTER);
-
-        navbar.add(title);
-
+        JPanel navbar = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g.create();
+                int w = getWidth();
+                int h = getHeight();
+                Color color1 = Color.RED;
+                Color color2 = Color.YELLOW;
+                GradientPaint gp = new GradientPaint(0, 0, color1, w, 0, color2);
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, w, h);
+                g2d.dispose();
+            }
+        };
+        navbar.setLayout(new FlowLayout(FlowLayout.LEFT));
+    
+        JLabel name = new JLabel("Artist Founder");
+        name.setForeground(Color.WHITE);
+        name.setFont(name.getFont().deriveFont(24.0f)); // Set font size to 24
+        navbar.add(name);
+        
+    
         JButton loginButton = new JButton("Login");
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Close the current HomePage
                 dispose();
-
+    
                 // Open the LoginPage
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -56,11 +69,12 @@ public class HomePage extends JFrame {
                 });
             }
         });
-
+    
         navbar.add(loginButton);
-
+    
         return navbar;
     }
+    
 
     private void fetchAndDisplayPosts() {
         String jdbcUrl = "jdbc:mysql://localhost:3306/pblproject";
@@ -101,70 +115,74 @@ public class HomePage extends JFrame {
         int[] likes = {likesCount}; // Array to hold the like count
     
         JPanel cardPanel = new JPanel();
-        cardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        cardPanel.setBorder(BorderFactory.createEmptyBorder(8, 7, 7, 7)); // Add padding to the card
         cardPanel.setLayout(new BorderLayout());
         cardPanel.setBackground(new Color(204, 255, 204)); // Faint green background color
     
         JLabel titleLabel = new JLabel(title + " by " + userName); // Include user's name in the title
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center align the title
-        titleLabel.setFont(titleLabel.getFont().deriveFont(20.0f)); // Set bigger font size for the title
+        titleLabel.setFont(titleLabel.getFont().deriveFont(17.0f)); // Set bigger font size for the title
         cardPanel.add(titleLabel, BorderLayout.NORTH);
     
         JLabel imageLabel = new JLabel(new ImageIcon(imageUrl));
         cardPanel.add(imageLabel, BorderLayout.CENTER);
     
         JLabel descriptionLabel = new JLabel(description);
+        descriptionLabel.setBorder(BorderFactory.createEmptyBorder(15, 0, 5, 0)); // Add padding to the description
         cardPanel.add(descriptionLabel, BorderLayout.SOUTH);
     
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2)); // Use a GridLayout for the buttons
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 10, 0)); // Add margin between description and buttons
         cardPanel.add(buttonPanel, BorderLayout.SOUTH);
     
         JButton likeButton = new JButton("Likes: " + likes[0]);
-        likeButton.setForeground(Color.WHITE); // White text color
-        likeButton.setBackground(new Color(255, 50, 20)); // Faint red background color
-        likeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Update the database
-                updateLikesCount(title);
-    
-                // Update the likes count displayed on the card
-                likes[0]++;
-                likeButton.setText("Likes: " + likes[0]);
-            }
-        });
-        buttonPanel.add(likeButton);
-    
+likeButton.setForeground(Color.WHITE); // White text color
+likeButton.setBackground(new Color(255, 50, 20)); // Faint red background color
+likeButton.setFont(likeButton.getFont().deriveFont(12.0f)); // Set font size to 12
+likeButton.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Update the database
+        updateLikesCount(title);
 
-        JButton viewButton = new JButton("View Details");
-        viewButton.setBackground(new Color(204, 153, 255)); // Faint violet background color
-        viewButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Create a panel to show post details
-                JPanel postDetailPanel = new JPanel(new GridLayout(3, 1));
-                postDetailPanel.setPreferredSize(new Dimension(400, 150)); // Set panel size
-                postDetailPanel.setBackground(new Color(255, 255, 204)); // Yellow background color
-    
-                JLabel titleLabel = new JLabel("Title: " + title);
-                titleLabel.setForeground(Color.GREEN); // Green color for title
-                postDetailPanel.add(titleLabel);
-    
-                JLabel userLabel = new JLabel("Username: " + userName);
-                userLabel.setForeground(Color.BLUE); // Blue color for username
-                postDetailPanel.add(userLabel);
-    
-                JLabel descriptionLabel = new JLabel("Description: " + description);
-                descriptionLabel.setForeground(Color.RED); // Red color for description
-                postDetailPanel.add(descriptionLabel);
-    
-                JOptionPane.showMessageDialog(null, postDetailPanel, "Post Details", JOptionPane.PLAIN_MESSAGE);
-            }
-        });
-        buttonPanel.add(viewButton);
-    
+        // Update the likes count displayed on the card
+        likes[0]++;
+        likeButton.setText("Likes: " + likes[0]);
+    }
+});
+buttonPanel.add(likeButton);
+
+JButton viewButton = new JButton("View Details");
+viewButton.setBackground(new Color(204, 153, 255)); // Faint violet background color
+viewButton.setFont(viewButton.getFont().deriveFont(12.0f)); // Set font size to 12
+viewButton.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Create a panel to show post details
+        JPanel postDetailPanel = new JPanel(new GridLayout(3, 1));
+        postDetailPanel.setPreferredSize(new Dimension(400, 150)); // Set panel size
+        postDetailPanel.setBackground(new Color(255, 255, 204)); // Yellow background color
+
+        JLabel titleLabel = new JLabel("Title: " + title);
+        titleLabel.setForeground(Color.GREEN); // Green color for title
+        postDetailPanel.add(titleLabel);
+
+        JLabel userLabel = new JLabel("Username: " + userName);
+        userLabel.setForeground(Color.BLUE); // Blue color for username
+        postDetailPanel.add(userLabel);
+
+        JLabel descriptionLabel = new JLabel("Description: " + description);
+        descriptionLabel.setForeground(Color.RED); // Red color for description
+        postDetailPanel.add(descriptionLabel);
+
+        JOptionPane.showMessageDialog(null, postDetailPanel, "Post Details", JOptionPane.PLAIN_MESSAGE);
+    }
+});
+buttonPanel.add(viewButton);
+
         return cardPanel;
     }
+    
     
     
     
