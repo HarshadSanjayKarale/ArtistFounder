@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -22,13 +21,41 @@ public class SignUpPage extends JFrame {
         setLocationRelativeTo(null);
 
         JLabel signUpLabel = new JLabel("Sign Up Page");
+        signUpLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        signUpLabel.setForeground(Color.WHITE); // Set text color to white
+
+        // Add padding and spacing to components
+        int padding = 20;
+        signUpLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
+        signUpLabel.setOpaque(true); // Make the label opaque to set background color
+        signUpLabel.setBackground(Color.BLUE); // Set background color for the label
 
         emailField = new JTextField(20);
+        emailField.setFont(new Font("Arial", Font.PLAIN, 14));
+        emailField.setMargin(new Insets(15, 10, 5, 10));
+        emailField.setToolTipText("Enter your email");
+
         firstNameField = new JTextField(20);
+        firstNameField.setFont(new Font("Arial", Font.PLAIN, 14));
+        firstNameField.setMargin(new Insets(15, 10, 5, 10));
+        firstNameField.setToolTipText("Enter your first name");
+
         lastNameField = new JTextField(20);
+        lastNameField.setFont(new Font("Arial", Font.PLAIN, 14));
+        lastNameField.setMargin(new Insets(15, 10, 5, 10));
+        lastNameField.setToolTipText("Enter your last name");
+
         passwordField = new JPasswordField(20);
+        passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
+        passwordField.setMargin(new Insets(15, 10, 5, 10));
+        passwordField.setToolTipText("Enter your password");
 
         JButton signUpButton = new JButton("Sign Up");
+        signUpButton.setFont(new Font("Arial", Font.BOLD, 16));
+        signUpButton.setBackground(Color.BLUE);
+        signUpButton.setForeground(Color.WHITE);
+        signUpButton.setOpaque(true);
+        signUpButton.setBorderPainted(false);
         signUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -52,19 +79,27 @@ public class SignUpPage extends JFrame {
             }
         });
 
-        // Add padding and spacing to components
-        int padding = 20;
-        signUpLabel.setBorder(new EmptyBorder(padding, padding, padding, padding));
-        signUpButton.setBorder(new EmptyBorder(padding, padding, padding, padding));
+        JPanel contentPane = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                int w = getWidth();
+                int h = getHeight();
+                Color color1 = new Color(30, 144, 255);
+                Color color2 = Color.WHITE;
+                GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, w, h);
+            }
+        };
+        contentPane.setLayout(new BorderLayout());
 
-        int spacing = 10;
-        setLayout(new BorderLayout(spacing, spacing));
-        add(signUpLabel, BorderLayout.NORTH);
-        add(createInputPanel(), BorderLayout.CENTER);
-        add(signUpButton, BorderLayout.SOUTH);
+        contentPane.add(signUpLabel, BorderLayout.NORTH);
+        contentPane.add(createInputPanel(), BorderLayout.CENTER);
+        contentPane.add(signUpButton, BorderLayout.SOUTH);
 
-        // Set background color
-        getContentPane().setBackground(Color.CYAN);
+        setContentPane(contentPane);
 
         setVisible(true);
     }
@@ -79,6 +114,7 @@ public class SignUpPage extends JFrame {
         inputPanel.add(lastNameField);
         inputPanel.add(new JLabel("Password:"));
         inputPanel.add(passwordField);
+
         return inputPanel;
     }
 
