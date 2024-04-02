@@ -1,20 +1,34 @@
 CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    first_name VARCHAR(255),
-    last_name VARCHAR(255)
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL
 );
 
 
-
 CREATE TABLE posts (
-    post_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
+    post_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
     title VARCHAR(255),
     image VARCHAR(255),
     description TEXT,
     no_of_likes INT,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+
+CREATE TABLE messages (
+    messageid INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    post_id INT NOT NULL,
+    post_user_id INT NOT NULL,
+    user_id INT NOT NULL,
+    msg TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES posts(post_id),
+    FOREIGN KEY (post_user_id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 
