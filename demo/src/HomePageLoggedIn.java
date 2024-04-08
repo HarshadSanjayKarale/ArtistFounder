@@ -42,30 +42,30 @@ public class HomePageLoggedIn extends JFrame {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g.create();
-
+    
                 int width = getWidth();
                 int height = getHeight();
-
+    
                 Color startColor = new Color(255, 0, 0); // Pink
                 Color endColor = new Color(255, 255, 0); // Yellow
-
+    
                 GradientPaint gradientPaint = new GradientPaint(0, 0, startColor, width, height, endColor);
                 g2d.setPaint(gradientPaint);
                 g2d.fillRect(0, 0, width, height);
-
+    
                 g2d.dispose();
             }
         };
         navbar.setLayout(new BorderLayout()); // Use BorderLayout for left and right alignment
-
+    
         JLabel title = new JLabel("Artist Founder");
         title.setForeground(Color.WHITE);
         title.setHorizontalAlignment(SwingConstants.LEFT); // Align the title to the left
         navbar.add(title, BorderLayout.WEST); // Add title to the left side
-
+    
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Panel for buttons on the right
         buttonsPanel.setOpaque(false); // Make the panel transparent
-
+    
         JButton profileButton = new JButton("Profile");
         profileButton.addActionListener(e -> {
             // Fetch and display user profile details
@@ -73,27 +73,28 @@ public class HomePageLoggedIn extends JFrame {
                 String jdbcUrl = "jdbc:mysql://localhost:3306/pblproject";
                 String dbUser = "root";
                 String dbPassword = "SanjayKarale@123";
-
+    
                 Connection connection = DriverManager.getConnection(jdbcUrl, dbUser, dbPassword);
-
-                String query = "SELECT * FROM users WHERE email = ?";
+    
+                String query = "SELECT id, first_name, last_name, email FROM users WHERE email = ?";
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setString(1, loggedInUserEmail); // Use the email of the logged-in user
                 ResultSet resultSet = preparedStatement.executeQuery();
-
+    
                 if (resultSet.next()) {
+                    int userId = resultSet.getInt("id");
                     String firstName = resultSet.getString("first_name");
                     String lastName = resultSet.getString("last_name");
                     String email = resultSet.getString("email");
                     String userDetails = "Name: " + firstName + " " + lastName + "\nEmail: " + email;
-
+    
                     JOptionPane.showMessageDialog(navbar, userDetails, "User Profile",
                             JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(navbar, "User not found", "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
-
+    
                 preparedStatement.close();
                 connection.close();
             } catch (SQLException ex) {
@@ -103,29 +104,66 @@ public class HomePageLoggedIn extends JFrame {
             }
         });
         buttonsPanel.add(profileButton);
-
+    
         JButton notificationButton = new JButton("Notification");
         notificationButton.addActionListener(e -> displayNotifications());
         buttonsPanel.add(notificationButton);
-
+    
         JButton addPostButton = new JButton("CreatePost");
         addPostButton.addActionListener(e -> addPost());
         buttonsPanel.add(addPostButton);
-
+    
+        JButton postsButton = new JButton("Posts");
+        postsButton.addActionListener(e -> {
+            try {
+                String jdbcUrl = "jdbc:mysql://localhost:3306/pblproject";
+                String dbUser = "root";
+                String dbPassword = "SanjayKarale@123";
+    
+                Connection connection = DriverManager.getConnection(jdbcUrl, dbUser, dbPassword);
+    
+                String query = "SELECT id, first_name, last_name, email FROM users WHERE email = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                preparedStatement.setString(1, loggedInUserEmail); // Use the email of the logged-in user
+                ResultSet resultSet = preparedStatement.executeQuery();
+    
+                if (resultSet.next()) {
+                    int userId = resultSet.getInt("id");
+                    // Close the current frame (assuming this is a JFrame)
+                    SwingUtilities.getWindowAncestor(navbar).dispose();
+                    // Open the Posts frame
+                    SwingUtilities.invokeLater(() -> new Posts(userId).setVisible(true));
+                } else {
+                    JOptionPane.showMessageDialog(navbar, "Posts not found", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+    
+                preparedStatement.close();
+                connection.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(navbar, "Database error: " + ex.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        buttonsPanel.add(postsButton);
+    
         JButton logoutButton = new JButton("Logout");
         logoutButton.addActionListener(e -> {
             // Close the current HomePageLoggedIn
-            dispose();
-
+            SwingUtilities.getWindowAncestor(navbar).dispose();
+    
             // Open the HomePage
-            SwingUtilities.invokeLater(() -> new HomePage());
+            SwingUtilities.invokeLater(() -> new HomePage().setVisible(true));
         });
         buttonsPanel.add(logoutButton);
-
+    
         navbar.add(buttonsPanel, BorderLayout.EAST); // Add buttonsPanel to the right side
-
+    
         return navbar;
     }
+    
+    
 
     private void displayNotifications() {
         try {
