@@ -1,5 +1,5 @@
-
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,25 +12,39 @@ public class CreatePost extends JPanel {
 
     public CreatePost() {
         setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(900, 500)); // Set the size to match the home page
+        setPreferredSize(new Dimension(600, 400)); // Set a preferred size for the panel
+        setBorder(new EmptyBorder(20, 20, 20, 20)); // Add some padding
 
-        JPanel inputPanel = new JPanel(new GridLayout(3, 2));
+        JPanel inputPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(5, 5, 5, 5);
 
-        titleField = new JTextField();
-        imageField = new JTextField();
-        descriptionField = new JTextArea();
-        JScrollPane descriptionScrollPane = new JScrollPane(descriptionField);
-        descriptionScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        // Title field
+        JLabel titleLabel = new JLabel("Title:");
+        inputPanel.add(titleLabel, gbc);
 
-        inputPanel.add(new JLabel("Title:"));
-        inputPanel.add(titleField);
-        inputPanel.add(new JLabel("Image URL:"));
-        inputPanel.add(imageField);
-        inputPanel.add(new JLabel("Description:"));
-        inputPanel.add(descriptionScrollPane);
+        gbc.gridx++;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        titleField = new JTextField(20);
+        inputPanel.add(titleField, gbc);
 
-        add(inputPanel, BorderLayout.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.fill = GridBagConstraints.NONE;
+        JLabel imageLabel = new JLabel("Image URL:");
+        inputPanel.add(imageLabel, gbc);
 
+        gbc.gridx++;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        imageField = new JTextField(20);
+        inputPanel.add(imageField, gbc);
+
+        // Select Image button
+        gbc.gridx = 2; // Position the button in the third column
+        gbc.fill = GridBagConstraints.NONE;
         JButton selectImageButton = new JButton("Select Image");
         selectImageButton.addActionListener(new ActionListener() {
             @Override
@@ -43,8 +57,41 @@ public class CreatePost extends JPanel {
                 }
             }
         });
+        inputPanel.add(selectImageButton, gbc);
 
-        add(selectImageButton, BorderLayout.SOUTH);
+        // Description field
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.fill = GridBagConstraints.NONE;
+        JLabel descriptionLabel = new JLabel("Description:");
+        inputPanel.add(descriptionLabel, gbc);
+
+        gbc.gridx++;
+        gbc.gridy++;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 1.0;
+        descriptionField = new JTextArea(5, 20);
+        JScrollPane descriptionScrollPane = new JScrollPane(descriptionField);
+        descriptionScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        inputPanel.add(descriptionScrollPane, gbc);
+
+        add(inputPanel, BorderLayout.CENTER);
+
+        // Button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton createPostButton = new JButton("Create Post");
+        createPostButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Implement create post functionality here
+                // You can access the title, image URL, and description using getTitle(), getImageUrl(), and getDescription() methods
+                System.out.println("Title: " + getTitle());
+                System.out.println("Image URL: " + getImageUrl());
+                System.out.println("Description: " + getDescription());
+            }
+        });
+        buttonPanel.add(createPostButton);
+        add(buttonPanel, BorderLayout.SOUTH);
     }
 
     public String getTitle() {
@@ -57,5 +104,16 @@ public class CreatePost extends JPanel {
 
     public String getDescription() {
         return descriptionField.getText();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Create Post");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.add(new CreatePost());
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
     }
 }
